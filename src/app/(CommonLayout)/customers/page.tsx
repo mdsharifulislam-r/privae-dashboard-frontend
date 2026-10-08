@@ -31,6 +31,7 @@ const Customers = async ({ searchParams }: { searchParams: any }) => {
   const customers = resCustomers?.data?.map((item: any) => {
     const rating = item?.avg_rating && Number(item?.avg_rating).toFixed(2)
     return {
+      _id: item?._id,
       id: item?.userId,
       name: item?.name || "N/A",
       email: item?.email || "N/A",
@@ -57,7 +58,7 @@ const Customers = async ({ searchParams }: { searchParams: any }) => {
         </div>
       </div>
       <div className="pb-8 pt-4">
-        <CustomPagination TOTAL_PAGES={resCustomers?.pagination?.totalPage} qryName="page" totals={resCustomers?.pagination?.total}/>
+        <CustomPagination TOTAL_PAGES={resCustomers?.pagination?.totalPage} qryName="page" totals={resCustomers?.pagination?.total} />
       </div>
     </div>
   )

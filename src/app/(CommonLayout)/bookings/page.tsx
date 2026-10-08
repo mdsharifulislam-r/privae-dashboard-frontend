@@ -50,7 +50,8 @@ const Bookings = async ({ searchParams }: { searchParams: any }) => {
 
   const bookings = resBookings?.data?.map((item: any) => {
     return {
-      id: item?._id,
+      _id: item?._id,
+      id: item?.order_id,
       order_id: item?.order_id,
       status: item?.status,
       dateTime: item?.deadline,

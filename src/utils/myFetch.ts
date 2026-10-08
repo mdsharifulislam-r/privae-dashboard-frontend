@@ -1,13 +1,10 @@
-"use server";
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { getToken } from "./getToken";
 
-export interface FetchResponse {
+export interface FetchResponse<T = any> {
   success: boolean;
   message?: string;
-  data?: any;
+  data?: T | null;
   pagination?: {
     total: number;
     page: number;
@@ -17,34 +14,37 @@ export interface FetchResponse {
   error?: string | null;
 }
 
-// export type tagsType = "Admin" | "Entrepreneur" | "Investor" | "User";
-
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 interface FetchOptions {
   method?: HttpMethod;
   body?: any;
   tags?: string[];
+  revalidate?: number | false;
   token?: string;
   headers?: Record<string, string>;
   cache?: RequestCache;
 }
 
-export const myFetch = async (
+// Set a safe fallback time in seconds (60s = 1 minutes)
+const DEFAULT_REVALIDATE = 60;
+
+export const myFetch = async <T = any>(
   url: string,
   {
     method = "GET",
     body,
     tags,
+    revalidate = DEFAULT_REVALIDATE,
     token,
     headers = {},
-    cache = "no-cache",
+    cache,
   }: FetchOptions = {}
-): Promise<FetchResponse> => {
+): Promise<FetchResponse<T>> => {
   const accessToken = token || (await getToken());
 
   const isFormData = body instanceof FormData;
-  const hasBody = body !== undefined && method !== "GET";
+  const isGet = method === "GET";
 
   const reqHeaders: Record<string, string> = {
     Accept: "application/json",
@@ -53,13 +53,27 @@ export const myFetch = async (
     ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
   };
 
+  // Configure Next.js caching options
+  const nextConfig: { tags?: string[]; revalidate?: number | false } = {};
+  if (tags?.length) nextConfig.tags = tags;
+  if (revalidate !== undefined) nextConfig.revalidate = revalidate;
+
+  // Cache policy:
+  // - Non-GET: always "no-store"
+  // - GET: default to "force-cache", default revalidate is DEFAULT_REVALIDATE(60 seconds)
+  const resolvedCache: RequestCache = !isGet
+    ? "no-store"
+    : cache ?? (revalidate === false ? "force-cache" : "default");
+
   try {
     const response = await fetch(`${process.env.SERVER_URL}${url}`, {
       method,
       headers: reqHeaders,
-      ...(hasBody && { body: isFormData ? body : JSON.stringify(body) }),
-      ...(tags && { next: { tags } }),
-      ...(!(method === "GET") ? { cache: "no-store" } : { cache: cache }),
+      ...(body !== undefined && !isGet && {
+        body: isFormData ? body : JSON.stringify(body),
+      }),
+      cache: resolvedCache,
+      ...(isGet && Object.keys(nextConfig).length > 0 && { next: nextConfig }),
     });
 
     const data = await response.json();
@@ -78,7 +92,7 @@ export const myFetch = async (
       success: false,
       message: data?.message,
       data: null,
-      error: data?.errorMessages || "Request failed",
+      error: data?.errorMessages || data?.message || "Request failed",
     };
   } catch (error) {
     return {

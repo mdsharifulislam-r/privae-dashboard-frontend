@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -21,12 +20,11 @@ type AddUserFormValues = {
 
 
 const AddCategory = ({ category }: { category?: any }) => {
-  const [preview, setPreview] = useState<string>("");
+  const [filePreview, setFilePreview] = useState<string>("");
 
   const {
     register,
     handleSubmit,
-    watch,
     reset,
   } = useForm<AddUserFormValues>({
     defaultValues: {
@@ -39,19 +37,10 @@ const AddCategory = ({ category }: { category?: any }) => {
       reset({
         name: category.name,
       });
-      setPreview(formatUrl(category.image));
     }
-  }, [category]);
+  }, [category, reset]);
 
-  const fileImage = watch("image");
-
-  useEffect(() => {
-    if (!fileImage?.length) return;
-    const file = fileImage[0];
-    const previewUrl = URL.createObjectURL(file);
-    setPreview(previewUrl);
-    // return () => URL.revokeObjectURL(previewUrl);
-  }, [fileImage]);
+  const preview = filePreview || (category?.image ? formatUrl(category.image) : "");
 
   // Submit handler
   const onSubmit = async (data: AddUserFormValues) => {
@@ -78,6 +67,7 @@ const AddCategory = ({ category }: { category?: any }) => {
       //console.log("Response Data:", res);
 
       if (res?.success) {
+        setFilePreview("");
         const message = category ? "Category updated successfully" : "Category added successfully";
         toast.success(message);
         revalidate("admin_cusine");
@@ -114,7 +104,14 @@ const AddCategory = ({ category }: { category?: any }) => {
             accept="image/*"
             id="addUserImageId"
             className="hidden"
-            {...register("image")}
+            {...register("image", {
+              onChange: (e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setFilePreview(URL.createObjectURL(file));
+                }
+              },
+            })}
           />
 
           <button

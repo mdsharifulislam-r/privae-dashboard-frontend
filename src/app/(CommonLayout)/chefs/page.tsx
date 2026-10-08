@@ -28,7 +28,8 @@ const Chefs = async ({ searchParams }: { searchParams: any }) => {
   const chefs = resChefs?.data?.map((item: any) => {
     const rating = item?.avg_rating && Number(item?.avg_rating).toFixed(2)
     return {
-      id: item?._id,
+      _id: item?._id,
+      id: item?.id,
       userId: item?.userId,
       name: item?.name,
       email: item?.email,

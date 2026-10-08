@@ -36,7 +36,8 @@ const PaymentAndDiscounts = async ({ searchParams }: { searchParams: any }) => {
 
   const transactions = resTransactions?.data?.map((item: any) => {
     return {
-      id: item?._id,
+      _id: item?._id,
+      id: item?.order_id,
       type: item?.type,
       name: item?.user?.name,
       amount: item?.total,

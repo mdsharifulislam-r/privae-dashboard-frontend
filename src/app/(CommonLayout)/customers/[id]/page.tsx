@@ -16,9 +16,9 @@ const SingleBookingPage = async ({ params }: { params: any }) => {
     method: "GET",
     tags: ['Customer']
   })
-  const customerDetails = resCustomer?.data
+  const customerDetails = resCustomer?.data || {}
 
-  
+
 
   return (
     <div className="pb-4 xl:pb-6">

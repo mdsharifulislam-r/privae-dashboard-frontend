@@ -315,7 +315,7 @@ export default function PromoCodeForm({ id }: { id?: string }) {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-black text-white py-2 h-12 rounded-xl font-medium hover:bg-black/90 transition cursor-pointer"
+            className="w-full bg-[#272727] text-white py-2 h-12 rounded-xl font-medium hover:bg-black/90 transition cursor-pointer"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </button>
