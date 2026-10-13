@@ -18,8 +18,6 @@ const SingleChefPage = async ({ params }: { params: any }) => {
   })
   const chefDetails = resChef?.data
 
-  console.log("Chef Details : ", chefDetails)
-
   return (
     <div className="pb-4 xl:pb-6">
       <div className="flex justify-between items-center px-4 pb-8">

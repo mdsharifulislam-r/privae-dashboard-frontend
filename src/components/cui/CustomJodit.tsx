@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import JoditEditor from 'jodit-react';
 import { EDisclaimerType } from '@/enums/userEnums';
@@ -9,17 +8,19 @@ function CustomJodit({ type }: { type: EDisclaimerType }) {
   const editor = useRef(null);
   const [content, setContent] = useState('');
 
-  const getContent = async () => {
-    const res = await myFetch(`/disclaimer?type=${type}`, { method: "GET" });
-    //console.log("Get Content : ", res)
-
-    if (res?.success) {
-      setContent(res?.data);
-    }
-  }
   useEffect(() => {
-    if (type) { getContent() }
-  }, [type])
+    let ignore = false;
+    if (type) {
+      myFetch(`/disclaimer?type=${type}`, { method: "GET" }).then((res) => {
+        if (!ignore && res?.success) {
+          setContent(res?.data);
+        }
+      });
+    }
+    return () => {
+      ignore = true;
+    };
+  }, [type]);
 
   const config = useMemo(
     () => ({

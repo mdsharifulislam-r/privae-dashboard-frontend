@@ -40,10 +40,10 @@ function CustomTable<TData>({ data, columns, path }: CustomTableProps<TData>) {
     getRowId: (row: any) => row.id,
   })
 
-  const redirectTo = (id: string) => {
-    setSelectedId(id)
+  const redirectTo = (data: any) => {
+    setSelectedId(data?._id)
     if (path) {
-      router.push(`${path}/${id}`)
+      router.push(`${path}/${data?._id}`)
     }
   }
 
@@ -77,7 +77,7 @@ function CustomTable<TData>({ data, columns, path }: CustomTableProps<TData>) {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  onClick={() => redirectTo(row.id)}
+                  onClick={() => redirectTo(row.original)}
                   data-state={row.id === selectedId ? "selected" : "unselected"}
                   className="px-2 odd:bg-[#F6F6F6] hover:bg-gray-200 cursor-pointer data-[state=selected]:bg-gray-300 transition-colors duration-300"
                 >

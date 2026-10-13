@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -36,13 +35,12 @@ type AddUserFormValues = {
 
 const AddUser = ({ ExistUser }: { ExistUser?: Record<string, any> }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [preview, setPreview] = useState<string>("");
+  const [filePreview, setFilePreview] = useState<string>("");
 
   const {
     register,
     handleSubmit,
     control,
-    watch,
     reset,
   } = useForm<AddUserFormValues>({
     defaultValues: {
@@ -52,9 +50,6 @@ const AddUser = ({ ExistUser }: { ExistUser?: Record<string, any> }) => {
       role: "ADMIN",
     },
   });
-
-
-
 
   useEffect(() => {
     //console.log("useEffect working - get single user", ExistUser)
@@ -66,22 +61,10 @@ const AddUser = ({ ExistUser }: { ExistUser?: Record<string, any> }) => {
         role: ExistUser?.role,
       });
     }
-    setPreview(formatUrl(ExistUser?.image));
 
-  }, [ExistUser]);
+  }, [ExistUser, reset]);
 
-  const fileImage = watch("image");
-
-  useEffect(() => {
-    if (!fileImage?.length) return;
-    const file = fileImage[0];
-    const previewUrl = URL.createObjectURL(file);
-    setPreview(previewUrl);
-    // return () => URL.revokeObjectURL(previewUrl);
-  }, [fileImage]);
-
-
-
+  const preview = filePreview || (ExistUser?.image ? formatUrl(ExistUser.image) : "");
 
   // Submit handler
   const onSubmit = async (data: AddUserFormValues) => {
@@ -121,6 +104,7 @@ const AddUser = ({ ExistUser }: { ExistUser?: Record<string, any> }) => {
       //console.log("Add User Res :", res);
 
       if (res?.success) {
+        setFilePreview("");
         const message = ExistUser ? "User updated successfully" : "User added successfully";
         toast.success(res?.message || message);
         revalidate("Access");
@@ -129,7 +113,7 @@ const AddUser = ({ ExistUser }: { ExistUser?: Record<string, any> }) => {
         const message = ExistUser ? "User updated failed" : "User added failed";
         toast.error(res?.message || message);
         // reset();
-        // setPreview("");
+        // setFilePreview("");
       }
 
 
@@ -161,7 +145,14 @@ const AddUser = ({ ExistUser }: { ExistUser?: Record<string, any> }) => {
             accept="image/*"
             id="addUserImageId"
             className="hidden"
-            {...register("image")}
+            {...register("image", {
+              onChange: (e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setFilePreview(URL.createObjectURL(file));
+                }
+              },
+            })}
           />
 
           <button

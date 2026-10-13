@@ -116,7 +116,7 @@ export default function SingleChefComponent({ chefDetails, id }: { chefDetails: 
         <p className="font-bold text-xl text-gray-800">Profile</p>
         <table className="text-sm text-left text-gray-600">
           <tbody>
-            <RowString label="Chef ID" value={chefDetails?._id} />
+            <RowString label="Chef ID" value={chefDetails?.userId} />
             <RowString label="Member since" value={dayjs(chefDetails?.createdAt).format("DD-MMM-YYYY")} />
             <RowString label="Email" value={chefDetails?.email} />
             <RowString label="Phone" value={chefDetails?.contact} />
@@ -176,11 +176,11 @@ export default function SingleChefComponent({ chefDetails, id }: { chefDetails: 
         </button>
         {/* <button className="bg-[#F2F2F2] rounded-sm px-4 py-1 text-gray-700 font-semibold cursor-pointer">Add Note</button> */}
         <CustomModal trigger={<button className="bg-[#F2F2F2] rounded-full px-4 py-1 text-gray-700 text-sm cursor-pointer">Add Note</button>} title={"Add Note"} >
-          <EditChef id={id}/>
+          <EditChef id={id} />
         </CustomModal>
         <Link href="/?id=1" className="bg-[#F2F2F2] rounded-full px-4 py-1 text-gray-700 text-sm cursor-pointer flex items-center">Chat</Link>
-        <CustomModal 
-          trigger={<button className="bg-[#F2F2F2] rounded-full px-4 py-1 text-gray-700 text-sm cursor-pointer">Verify Chef</button>} 
+        <CustomModal
+          trigger={<button className="bg-[#F2F2F2] rounded-full px-4 py-1 text-gray-700 text-sm cursor-pointer">Verify Chef</button>}
           title={`Verify Chef - ${chefDetails?.name}`}
           contentClass="max-w-2xl w-[90vw] md:w-[600px] max-h-[85vh] flex flex-col justify-between"
         >
@@ -203,7 +203,7 @@ export default function SingleChefComponent({ chefDetails, id }: { chefDetails: 
             {/* Status Checks Grid */}
             <div className="space-y-3 border-b pb-4">
               <h4 className="font-semibold text-gray-900">System Checklist</h4>
-              
+
               {/* NID Verification */}
               <div className="flex justify-between items-start gap-4 bg-gray-50 p-2.5 rounded-lg">
                 <div>
@@ -212,11 +212,10 @@ export default function SingleChefComponent({ chefDetails, id }: { chefDetails: 
                     <p className="text-xs text-gray-500 mt-0.5">{chefDetails.nid_verification_status.reason}</p>
                   )}
                 </div>
-                <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                  chefDetails?.nid_verification_status?.status === "Passed" || chefDetails?.nid_verification_status?.status === "success" 
-                    ? "bg-green-100 text-green-700" 
+                <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${chefDetails?.nid_verification_status?.status === "Passed" || chefDetails?.nid_verification_status?.status === "success"
+                    ? "bg-green-100 text-green-700"
                     : "bg-red-100 text-red-700"
-                }`}>
+                  }`}>
                   {chefDetails?.nid_verification_status?.status || "Failed"}
                 </span>
               </div>
@@ -229,11 +228,10 @@ export default function SingleChefComponent({ chefDetails, id }: { chefDetails: 
                     <p className="text-xs text-gray-500 mt-0.5">{chefDetails.food_safety_certificate_status.reason}</p>
                   )}
                 </div>
-                <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                  chefDetails?.food_safety_certificate_status?.isValid 
-                    ? "bg-green-100 text-green-700" 
+                <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${chefDetails?.food_safety_certificate_status?.isValid
+                    ? "bg-green-100 text-green-700"
                     : "bg-red-100 text-red-700"
-                }`}>
+                  }`}>
                   {chefDetails?.food_safety_certificate_status?.isValid ? "Valid" : "Invalid"}
                 </span>
               </div>
@@ -246,11 +244,10 @@ export default function SingleChefComponent({ chefDetails, id }: { chefDetails: 
                     <p className="text-xs text-gray-500 mt-0.5">{chefDetails.sex_offender_check_status.reason}</p>
                   )}
                 </div>
-                <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                  chefDetails?.sex_offender_check_status?.status === "Passed" || chefDetails?.sex_offender_check_status?.status === "success"
-                    ? "bg-green-100 text-green-700" 
+                <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${chefDetails?.sex_offender_check_status?.status === "Passed" || chefDetails?.sex_offender_check_status?.status === "success"
+                    ? "bg-green-100 text-green-700"
                     : "bg-red-100 text-red-700"
-                }`}>
+                  }`}>
                   {chefDetails?.sex_offender_check_status?.status || "Failed"}
                 </span>
               </div>
@@ -259,7 +256,7 @@ export default function SingleChefComponent({ chefDetails, id }: { chefDetails: 
             {/* Documents Grid */}
             <div className="space-y-3">
               <h4 className="font-semibold text-gray-900">Uploaded Documents</h4>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 {/* ID Card */}
                 {chefDetails?.id_card?.image && (
@@ -313,8 +310,8 @@ export default function SingleChefComponent({ chefDetails, id }: { chefDetails: 
             <button type="button" onClick={() => closedCustomModal()} className="px-4 py-2 border rounded-md text-gray-600 hover:bg-gray-50 text-sm font-semibold cursor-pointer">
               Skip
             </button>
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={handleApprove}
               disabled={chefDetails?.verification_completed}
               className="px-4 py-2 bg-black text-white rounded-md hover:bg-black/90 text-sm font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
